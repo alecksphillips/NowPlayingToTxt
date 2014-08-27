@@ -40,7 +40,7 @@ api_key = api_key='8cf8b8f0778a606621666c2152df79db'
 
 local_copy = 'nowplaying.xml'
 filename = 'nowplaying.txt'
-prepend = 'Now playing :'
+prepend = 'Now playing: '
 url = 'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=' + username + '&api_key=' + api_key
 
 #Main loop
