@@ -20,7 +20,7 @@ Add command-line options for:
 * username
 * appended and prepended text
 * update frequency
-* add testing (coveralls)
+Add testing (coveralls)
 
 GPL
 ---
