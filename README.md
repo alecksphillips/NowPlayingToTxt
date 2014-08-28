@@ -15,9 +15,9 @@ TODO
 ----
 
 Add command-line options for:
--username
--appended and prepended text
--update frequency
+*username
+*appended and prepended text
+*update frequency
 
 GPL
 ---
