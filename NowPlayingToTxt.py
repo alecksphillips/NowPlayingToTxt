@@ -77,17 +77,17 @@ def main():
         #Else, nothing playing
         else:
             #If only just stopped playing
-            if(last_url != ''):
+            if(last_track != ''):
                 
-                last_url = ''
+                last_track = ''
                 track_data = ''
                 
                 output = open(filename, 'w')
                 output.write(track_data)
                 output.close()
                 
-        #Need to wait 1 second for another API call
-        time.sleep(1)
+        #Need to wait at least 1 second for another API call
+        time.sleep(5)
 
 #Download xml as binary        
 def download(url,filename):
