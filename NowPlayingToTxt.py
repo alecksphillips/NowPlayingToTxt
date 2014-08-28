@@ -43,7 +43,7 @@ feed_url = ('http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=
     + username + '&api_key=' + api_key)
 
 def main():
-	#Keeping track of the last track that was playing using track url
+    #Keeping track of the last track that was playing using track url
     last_track = ''
 
     while True:
@@ -57,39 +57,39 @@ def main():
         
         #If track playing
         if (item.attributes.item(0)):
-		
+        
             current_track = item.getElementsByTagName('url')[0].firstChild.data
-			
-			#If track changed
+            
+            #If track changed
             if (current_track != last_track):
-			
+            
                 last_track = current_track
                 artist = item.getElementsByTagName('artist')[0].firstChild.data
                 track = item.getElementsByTagName('name')[0].firstChild.data
                 
                 track_data= prepend + artist + ' - ' + track + append
                 
-				#Update file
+                #Update file
                 output = open(filename, 'w')
                 output.write(track_data)
                 output.close()
-				
+                
         #Else, nothing playing
-		else:
-			#If only just stopped playing
+        else:
+            #If only just stopped playing
             if(last_url != ''):
                 
-				last_url = ''
+                last_url = ''
                 track_data = ''
-				
+                
                 output = open(filename, 'w')
                 output.write(track_data)
                 output.close()
-				
+                
         #Need to wait 1 second for another API call
-		time.sleep(1)
+        time.sleep(1)
 
-#Download xml as binary		
+#Download xml as binary        
 def download(url,filename):
     instream=urlopen(url)
     outfile=open(filename,'wb')
