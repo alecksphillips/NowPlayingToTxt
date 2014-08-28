@@ -1,6 +1,8 @@
 NowPlayingToTxt
 ===============
 
+[![Build Status](https://travis-ci.org/alecksphillips/NowPlayingToTxt.png?branch=master)](https://travis-ci.org/alecksphillips/NowPlayingToTxt)
+
 NowPlayingToTxt.py is a python script which periodically checks for
 changes to a user's now playing information on last.fm and updates a
 text file containing information for the currently playing track.
