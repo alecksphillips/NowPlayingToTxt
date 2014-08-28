@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 #
-# NowPlayingToTxt.py is a python script which periodically checks for changes to
-# a user's now playing information on last.fm and updates a text file containing
-# information for the currently playing track.
+# NowPlayingToTxt.py is a python script which periodically checks for
+# changes to a user's now playing information on last.fm and updates a
+# text file containing information for the currently playing track.
 # Copyright (C) 2014  Alex Phillips
 #
 
@@ -23,58 +23,73 @@
 #
 #########################
 
-#Check for changes
-#Update to text file
-
 try:
     from urllib.request import urlopen
 except ImportError:
     from urllib2 import urlopen
 from xml.dom import minidom
-import os.path
 import sys
 import time
 
+#Change this unless you want my terrible taste on your feed
 username = 'alecksphillips'
-api_key = api_key='8cf8b8f0778a606621666c2152df79db'
+api_key = api_key='17fbcb642c7354767cef8f24a3b2725d'
 
 local_copy = 'nowplaying.xml'
 filename = 'nowplaying.txt'
 prepend = 'Now playing: '
-url = 'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=' + username + '&api_key=' + api_key
+append = '                '
+feed_url = ('http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user='
+    + username + '&api_key=' + api_key)
 
-#Main loop
 def main():
-	trackurl = ''
+	#Keeping track of the last track that was playing using track url
+    last_track = ''
 
-	while True:
-		download(url,local_copy)
+    while True:
+        download(feed_url,local_copy)
+        
+        data=open(local_copy,'rb')
+        xmldoc=minidom.parse(data)
+        data.close()
+        
+        item = xmldoc.getElementsByTagName('track')[0]
+        
+        #If track playing
+        if (item.attributes.item(0)):
 		
-		data=open(local_copy,'rb')
-		xmldoc=minidom.parse(data)
-		data.close()
-		
-		item = xmldoc.getElementsByTagName('track')[0]
-		
-		#If track playing
-		if (item.attributes.item(0)):
-			#If track changed
-			if (item.getElementsByTagName('url') != trackurl):
-				#Track has changed, update file
-				trackurl = item.getElementsByTagName('url')[0].firstChild
-				artist = item.getElementsByTagName('artist')[0].firstChild.data
-				track = item.getElementsByTagName('name')[0].firstChild.data
+            current_track = item.getElementsByTagName('url')[0].firstChild.data
 			
-				output = open(filename, 'w')
-				output.write(prepend + artist + ' - ' + track)
-				output.close()
+			#If track changed
+            if (current_track != last_track):
+			
+                last_track = current_track
+                artist = item.getElementsByTagName('artist')[0].firstChild.data
+                track = item.getElementsByTagName('name')[0].firstChild.data
+                
+                track_data= prepend + artist + ' - ' + track + append
+                
+				#Update file
+                output = open(filename, 'w')
+                output.write(track_data)
+                output.close()
+				
+        #Else, nothing playing
 		else:
-			output = open(filename, 'w')
-			output.write('')
-			output.close()
+			#If only just stopped playing
+            if(last_url != ''):
+                
+				last_url = ''
+                track_data = ''
+				
+                output = open(filename, 'w')
+                output.write(track_data)
+                output.close()
+				
+        #Need to wait 1 second for another API call
 		time.sleep(1)
-	
-	
+
+#Download xml as binary		
 def download(url,filename):
     instream=urlopen(url)
     outfile=open(filename,'wb')
@@ -83,7 +98,5 @@ def download(url,filename):
     instream.close()
     outfile.close()
 
-
-	
 if __name__=="__main__":
     main()
