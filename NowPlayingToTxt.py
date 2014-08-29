@@ -25,27 +25,49 @@
 
 try:
     from urllib.request import urlopen
+    import urllib.error
 except ImportError:
     from urllib2 import urlopen
+    import urllib2.error
 from xml.dom import minidom
 import sys
 import time
+import argparse
 
-#Change this unless you want my terrible taste on your feed
-username = 'alecksphillips'
+description = 'NowPlayingToTxt.py is a python script which periodically \
+checks for changes to a user\'s now playing information on last.fm and \
+updates a text file containing information for the currently playing track. \
+Copyright (C) 2014  Alex Phillips'
+
+#Change this
 api_key = api_key='17fbcb642c7354767cef8f24a3b2725d'
 
 local_copy = 'nowplaying.xml'
 filename = 'nowplaying.txt'
-prepend = 'Now playing: '
-append = '                '
-feed_url = ('http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user='
-    + username + '&api_key=' + api_key)
+
+#Putting defaults at top of file for reference
+defaults = dict()
+defaults['prepend'] = 'Now playing: '
+defaults['append'] = '                '
+defaults['delay'] = 5
+
+args = dict()
 
 def main():
+    get_parameters()
+    
+    print('Starting with arguments:')
+    print('Username: ' + args['username'])
+    print('Prepended text: ' + args['prepend'])
+    print('Appended text: ' + args['append'])
+    print('Delay between updates: ' + str(args['delay']))
+    
     #Keeping track of the last track that was playing using track url
     last_track = ''
-
+    
+    feed_url = ('http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user='
+    + args['username'] + '&api_key=' + api_key + '&limit=1')
+    
     while True:
         download(feed_url,local_copy)
         
@@ -67,7 +89,9 @@ def main():
                 artist = item.getElementsByTagName('artist')[0].firstChild.data
                 track = item.getElementsByTagName('name')[0].firstChild.data
                 
-                track_data= prepend + artist + ' - ' + track + append
+                track_data= args['prepend'] + artist + ' - ' + track + args['append']
+                
+                print(track_data)
                 
                 #Update file
                 output = open(filename, 'w')
@@ -87,16 +111,43 @@ def main():
                 output.close()
                 
         #Need to wait at least 1 second for another API call
-        time.sleep(5)
+        time.sleep(args['delay'])
 
-#Download xml as binary        
+#Get command line arguments
+def get_parameters():
+    parser = argparse.ArgumentParser(prog='NowPlayingToTxt',description=description)
+    parser.add_argument('username')
+    parser.add_argument('-p', '--prepend', dest = 'prepend', default = defaults['prepend'])
+    parser.add_argument('-a', '--append', dest = 'append', default = defaults['append'])
+    parser.add_argument('-d', '--delay', dest = 'delay', default = defaults['delay'], type=int)
+    
+    input = parser.parse_args()
+        
+    args['username'] = input.username
+    args['prepend'] = input.prepend
+    args['append'] = input.append
+    if input.delay < 1:
+        print('#'*20)
+        print('Delay must be AT LEAST 1 second, setting to 1 second')
+        print('#'*20)
+        args['delay'] = 1
+    else:
+        args['delay'] = input.delay
+        
+
+        
+#Download xml as binary
 def download(url,filename):
-    instream=urlopen(url)
-    outfile=open(filename,'wb')
-    for chunk in instream:
-        outfile.write(chunk)
-    instream.close()
-    outfile.close()
+    try:
+        instream=urlopen(url)
+        outfile=open(filename,'wb')
+        for chunk in instream:
+            outfile.write(chunk)
+        instream.close()
+        outfile.close()
+    except Exception as e:
+        print(e)
+        sys.exit()
 
 if __name__=="__main__":
     main()

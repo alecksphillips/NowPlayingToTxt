@@ -11,16 +11,13 @@ Copyright (C) 2014  Alex Phillips
 Usage
 -----
 
-`python NowPlayingToTxt.py`
+`python NowPlayingToTxt.py USERNAME [-p 'prepended text'] [-a 'appended text'] [-d delay]`
 
 TODO
 ----
-
-Add command-line options for:
-* username
-* appended and prepended text
-* update frequency
 Add testing (coveralls)
+Add more detailed information on errors (e.g. 'Username may be spelt incorrectly')
+Add detailed information under help command (-h, --help)
 
 GPL
 ---
