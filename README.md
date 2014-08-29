@@ -15,9 +15,9 @@ Usage
 
 TODO
 ----
-Add testing (coveralls)
-Add more detailed information on errors (e.g. 'Username may be spelt incorrectly')
-Add detailed information under help command (-h, --help)
+* Add testing (coveralls)
+* Add more detailed information on errors (e.g. 'Username may be spelt incorrectly')
+* Add detailed information under help command (-h, --help)
 
 GPL
 ---
